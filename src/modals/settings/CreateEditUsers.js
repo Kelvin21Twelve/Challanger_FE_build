@@ -29,7 +29,13 @@ export default function CreateEditUsers({ open, onClose, data, onRefetch }) {
   const isSuccess = !!response?.success;
   const isLoading = isPending && !isSuccess && !isError;
 
-  const handleFinish = (values) => mutate(values);
+  const handleFinish = (values) => {
+    const updateValues = values || {};
+
+    if (!updateValues?.password) delete updateValues.password;
+
+    mutate(updateValues);
+  };
 
   const handleClose = useCallback(() => {
     form.resetFields();
@@ -164,7 +170,12 @@ export default function CreateEditUsers({ open, onClose, data, onRefetch }) {
           </Item>
 
           <Item name="password" label={t("Password")}>
-            <Input size="large" placeholder={t("Password")} type="password" />
+            <Input
+              size="large"
+              type="password"
+              autoComplete="off"
+              placeholder={t("Password")}
+            />
           </Item>
 
           <Item name="acc_code" label={t("Acc Code")}>
@@ -175,6 +186,7 @@ export default function CreateEditUsers({ open, onClose, data, onRefetch }) {
             <Input
               size="large"
               type="password"
+              autoComplete="off"
               placeholder={t("Confirm Password")}
             />
           </Item>

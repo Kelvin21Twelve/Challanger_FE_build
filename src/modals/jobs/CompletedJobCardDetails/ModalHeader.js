@@ -25,38 +25,38 @@ function Actions({ jobId }) {
   );
 }
 
-function Information({ calculation, overdue }) {
+function Information({ calculation, paidAmount }) {
   const t = useTranslations("modals");
   const { grand_total, balance } = calculation || {};
 
   return (
     <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-lg font-bold">
-      <div className="text-[#ff283c]">
-        <span>{t("Paid:")}</span>
-        <span className="font-medium pl-4">{overdue}</span>
-      </div>
-
       <div>
-        <span>{t("Balance:")}</span>
-        <span className="font-medium pl-4">{balance}</span>
+        <span>{t("Paid:")}</span>
+        <span className="font-medium pl-4">{paidAmount}</span>
       </div>
 
       <div>
         <span>{t("Total:")}</span>
         <span className="font-medium pl-4">{grand_total}</span>
       </div>
+
+      <div className="text-[#ff283c]">
+        <span>{t("Balance:")}</span>
+        <span className="font-medium pl-4">{balance}</span>
+      </div>
     </div>
   );
 }
 
-export default function ModalHeader({ calculation, overdue, jobId }) {
+export default function ModalHeader({ calculation, paidAmount, jobId }) {
   const t = useTranslations("modals");
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-0 items-start">
       <div className="text-3xl">{t("Completed Job Card Details")}</div>
       <Actions jobId={jobId} />
-      <Information calculation={calculation} overdue={overdue} />
+      <Information calculation={calculation} paidAmount={paidAmount} />
     </div>
   );
 }

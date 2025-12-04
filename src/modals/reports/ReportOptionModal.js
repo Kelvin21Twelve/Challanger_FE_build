@@ -111,6 +111,7 @@ export default function ReportOptionModal({
         onFinish={mutate}
         className="w-full"
         initialValues={{
+          checkbox: false,
           supplier_wise_report: "1",
         }}
       >
@@ -144,7 +145,25 @@ export default function ReportOptionModal({
           <Item
             name="from_date"
             label={t("From Date")}
-            rules={[{ required: true, message: t("This field is required") }]}
+            dependencies={["to_date"]}
+            rules={[
+              { required: true, message: t("This field is required") },
+              {
+                message: t("Date range is invalid"),
+                validator: (_, fromDate) => {
+                  let toDate = form.getFieldValue("to_date");
+
+                  if (!!fromDate && !!toDate) {
+                    toDate = dayjs(toDate).format("YYYY-MM-DD");
+                    fromDate = dayjs(fromDate).format("YYYY-MM-DD");
+
+                    const isAfter = dayjs(fromDate).isAfter(toDate);
+                    if (isAfter) return Promise.reject(new Error(""));
+                  }
+                  return Promise.resolve();
+                },
+              },
+            ]}
           >
             <DatePicker
               size="large"
@@ -156,7 +175,25 @@ export default function ReportOptionModal({
           <Item
             name="to_date"
             label={t("To Date")}
-            rules={[{ required: true, message: t("This field is required") }]}
+            dependencies={["from_date"]}
+            rules={[
+              { required: true, message: t("This field is required") },
+              {
+                message: t("Date range is invalid"),
+                validator: (_, toDate) => {
+                  let fromDate = form.getFieldValue("from_date");
+
+                  if (!!fromDate && !!toDate) {
+                    toDate = dayjs(toDate).format("YYYY-MM-DD");
+                    fromDate = dayjs(fromDate).format("YYYY-MM-DD");
+
+                    const isAfter = dayjs(fromDate).isAfter(toDate);
+                    if (isAfter) return Promise.reject(new Error(""));
+                  }
+                  return Promise.resolve();
+                },
+              },
+            ]}
           >
             <DatePicker
               size="large"
@@ -185,14 +222,43 @@ export default function ReportOptionModal({
           <div>
             <hr />
             <div className="pb-3">
-              <Checkbox onClick={() => setSendEmail((prev) => !prev)}>
+              <Checkbox
+                onClick={() =>
+                  setSendEmail((prev) => {
+                    const updateValue = !prev;
+                    form.setFieldValue("checkbox", updateValue);
+
+                    return updateValue;
+                  })
+                }
+              >
                 {t("Click here to send file in email")}
               </Checkbox>
             </div>
+
+            <Item hidden name="checkbox" />
+
             <Item
               name="send_to"
               label={t("Mail ID")}
-              rules={[{ required: true, message: t("This field is required") }]}
+              dependencies={["checkbox"]}
+              rules={[
+                {
+                  message: t("This field is required"),
+                  validator: (_, item) => {
+                    const flag = form.getFieldValue("checkbox");
+
+                    if (!flag) return Promise.resolve();
+                    if (!item) return Promise.reject(new Error(""));
+
+                    return Promise.resolve();
+                  },
+                },
+                {
+                  type: "email",
+                  message: t("Please enter a valid email"),
+                },
+              ]}
             >
               <Input
                 size="large"

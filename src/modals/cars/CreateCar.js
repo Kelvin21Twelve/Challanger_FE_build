@@ -118,10 +118,11 @@ export default function CreateCar({
   useEffect(() => {
     if (isCommonLoading) return;
     if (!dataId) return;
+    if (!open) return;
 
     const item = vehicles?.data?.find((item) => item.id == dataId);
     if (item) form.setFieldsValue(item);
-  }, [carModels?.data, dataId, form, isCommonLoading, vehicles]);
+  }, [carModels?.data, dataId, form, isCommonLoading, vehicles, open]);
 
   useEffect(() => {
     if (isCommonLoading) return;
@@ -436,7 +437,33 @@ export default function CreateCar({
                 name="plate_no"
                 label={t("Plate No")}
                 rules={[
-                  { required: true, message: t("This field is required") },
+                  {
+                    required: true,
+                    message: t("This field is required"),
+                    validator: (_, value) => {
+                      const hasItem = !!String(value).trim();
+
+                      return !hasItem
+                        ? Promise.reject(new Error(""))
+                        : Promise.resolve();
+                    },
+                  },
+                  {
+                    message: t("Plate no is already exists"),
+                    validator: (_, value) => {
+                      if (isEdit) return Promise.resolve();
+
+                      const hasItem = !!vehicles?.data?.find(
+                        (item) =>
+                          String(item.plate_no).trim().toLowerCase() ==
+                          String(value).trim(),
+                      );
+
+                      return hasItem
+                        ? Promise.reject(new Error(""))
+                        : Promise.resolve();
+                    },
+                  },
                 ]}
               >
                 <Input
@@ -470,7 +497,29 @@ export default function CreateCar({
                 />
               </Item>
 
-              <Item name="chasis_no" label={t("Chasis No")}>
+              <Item
+                name="chasis_no"
+                label={t("Chasis No")}
+                rules={[
+                  {
+                    message: t("Chassis no is already exists"),
+                    validator: (_, value) => {
+                      const record = vehicles?.data?.find(
+                        (item) =>
+                          String(item.chasis_no).trim().toLowerCase() ==
+                          String(value).trim(),
+                      );
+
+                      if (isEdit && record?.id == dataId)
+                        return Promise.resolve();
+
+                      if (!!record) return Promise.reject(new Error(""));
+
+                      return Promise.resolve();
+                    },
+                  },
+                ]}
+              >
                 <Input disabled={isReadOnly} placeholder={t("Chasis No")} />
               </Item>
 

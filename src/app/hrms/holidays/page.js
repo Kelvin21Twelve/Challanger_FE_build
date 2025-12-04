@@ -208,7 +208,10 @@ export default function Page() {
       <CreateHolidaysModal
         data={modelData}
         open={isModelOpen}
-        onClose={() => setIsModelOpen(false)}
+        onClose={() => {
+          setModelData(null);
+          setIsModelOpen(false);
+        }}
       />
     </div>
   );

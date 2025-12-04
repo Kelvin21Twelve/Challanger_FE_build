@@ -203,7 +203,7 @@
   },
   "spare-parts-return": {
     "Please select items to return": "Please select items to return",
-    "Spare Parts Sales Search From": "Spare Parts Sales Search From",
+    "Spare Parts Sales Search Form": "Spare Parts Sales Search Form",
     "Spare Parts Return Form": "Spare Parts Return Form",
     "Spare Parts Return From": "Spare Parts Return From",
     "Invoice No": "Invoice No",
@@ -325,6 +325,9 @@
     "View": "View"
   },
   "add-employee": {
+    "DOB cannot be greater or equal to join date": "DOB cannot be greater or equal to join date",
+    "Date can not be less or equal then start date": "Date can not be less or equal then start date",
+    "Date cannot be greater or equal then end date": "Date cannot be greater or equal then end date",
     "Print generation will take few minutes, Don't close the page!": "Print generation will take few minutes, Don't close the page!",
     "Please select an employee first!": "Please select an employee first!",
     "Employee is deleted successfully!": "Employee is deleted successfully!",
@@ -868,6 +871,10 @@
     "Add Note": "Add Note",
     "Refund By": "Refund By",
     "Card": "Card",
-    "Please upload a valid file": "Please upload a valid file"
+    "Please upload a valid file": "Please upload a valid file",
+    "Plate no is already exists": "Plate no is already exists",
+    "Chassis no is already exists": "Chassis no is already exists",
+    "Date range is invalid": "Date range is invalid",
+    "Invalid Time Range": "Invalid Time Range"
   }
 }

@@ -157,7 +157,28 @@ export default function Page() {
             title: t("Date"),
             key: "created_at",
             dataIndex: "created_at",
-            sorter: (a, b) => String(a.created_at).localeCompare(b.created_at),
+            render: (_, { entry_date, created_at, entry_time }) =>
+              !!entry_date
+                ? entry_date + " " + entry_time
+                : dayjs(created_at).format("YYYY-MM-DD HH:mm:ss"),
+
+            sorter: (a, b) => {
+              let date1, date2, dateStr1, dateStr2;
+
+              if (a.entry_date) {
+                dateStr1 = a.entry_date + " " + a.entry_time || "";
+                date1 = dayjs(dateStr1);
+              } else date1 = dayjs(a.created_at || "");
+
+              if (b.entry_date) {
+                dateStr2 = b.entry_date + " " + b.entry_time || "";
+                date2 = dayjs(dateStr2);
+              } else date2 = dayjs(b.created_at || "");
+
+              const diff = dayjs(date1).diff(dayjs(date2));
+
+              return diff;
+            },
           },
           {
             key: "id",

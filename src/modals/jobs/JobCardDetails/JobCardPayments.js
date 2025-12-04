@@ -32,7 +32,7 @@ export default function JobCardPaymentsModal({
   const payBy = useWatch("pay_by", form);
 
   const { filteredData, isSearchLoading, setQueryValue, setRecords } =
-    useTableSearch(["amount", "pay_by", "remaining"]);
+    useTableSearch(["amount", "pay_by_text", "remaining"]);
 
   const {
     reset,
@@ -83,7 +83,12 @@ export default function JobCardPaymentsModal({
   }, [form, reset, response]);
 
   useEffect(() => {
-    setRecords(data?.data || []);
+    const updatedData = (data?.data || []).map((item) => ({
+      ...item,
+      pay_by_text: getPaymentMethod(item?.pay_by),
+    }));
+
+    setRecords(updatedData);
   }, [data, setRecords]);
 
   return (
@@ -117,12 +122,11 @@ export default function JobCardPaymentsModal({
                       sorter: (a, b) => Number(a.amount) - Number(b.amount),
                     },
                     {
-                      key: "pay_by",
                       title: "Pay By",
-                      dataIndex: "pay_by",
-                      render: (_, item) => getPaymentMethod(item.pay_by),
+                      key: "pay_by_text",
+                      dataIndex: "pay_by_text",
                       sorter: (a, b) =>
-                        String(a.pay_by).localeCompare(b.pay_by),
+                        String(a.pay_by_text).localeCompare(b.pay_by_text),
                     },
                     {
                       key: "remaining",
@@ -159,9 +163,8 @@ export default function JobCardPaymentsModal({
               labelCol={{ span: 8 }}
               disabled={paymentLoading}
               initialValues={{
-                amount: 0,
+                amount: "",
                 balance: 0,
-                overdue: 0,
                 auth_code: "",
                 job_id: jobId,
                 grand_total: 0,
@@ -169,20 +172,52 @@ export default function JobCardPaymentsModal({
               className="[&_label]:w-full [&_label]:!h-full [&_label]:whitespace-break-spaces [&_label]:text-left"
             >
               <Item name="job_id" hidden />
-              <Item name="amount" label={t("Amount To Pay")} colon={false}>
-                <Input
-                  min={0}
-                  size="large"
-                  type="number"
-                  step={0.1}
-                  onKeyDown={(e) =>
-                    ["+", "-", "e"].includes(e.key) && e.preventDefault()
-                  }
-                  placeholder={t("Amount")}
-                />
-              </Item>
+              <div className="mb-4">
+                <Item
+                  name="amount"
+                  colon={false}
+                  required={false}
+                  label={t("Amount To Pay")}
+                  className="[&_.ant-row]:items-start [&_.ant-row_label]:mt-2"
+                  rules={[
+                    { required: true, message: t("This field is required") },
+                    {
+                      required: true,
+                      message: t("This field is required"),
+                      validator: (_, value) => {
+                        if (!value) return Promise.resolve();
 
-              <Item label={t("Pay By")} name="pay_by" colon={false}>
+                        const updatedValue = Number(value);
+                        if (updatedValue > 0) return Promise.resolve();
+
+                        return Promise.reject(new Error(""));
+                      },
+                    },
+                  ]}
+                >
+                  <Input
+                    min={0}
+                    size="large"
+                    type="number"
+                    step={0.1}
+                    onKeyDown={(e) =>
+                      ["+", "-", "e"].includes(e.key) && e.preventDefault()
+                    }
+                    placeholder={t("Amount")}
+                  />
+                </Item>
+              </div>
+
+              <Item
+                name="pay_by"
+                colon={false}
+                required={false}
+                label={t("Pay By")}
+                className="[&_.ant-row]:items-start [&_.ant-row_label]:mt-2"
+                rules={[
+                  { required: true, message: t("This field is required") },
+                ]}
+              >
                 <Select
                   showSearch
                   size="large"

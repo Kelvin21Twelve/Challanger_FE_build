@@ -55,7 +55,7 @@ export default function SparePartsSalesFormModal({
     reset,
   } = useSparePartsItemInsert();
 
-  const { data, isLoading: cabLoading } = useGetCab(1);
+  const { data, isLoading: cabLoading, refetch } = useGetCab(1);
   const { data: cabDetails, isLoading: cabDetailsLoading } =
     useGetCabDetails(cabNoValue);
   const isLoading = isPending && !isSuccess && !isError;
@@ -152,6 +152,10 @@ export default function SparePartsSalesFormModal({
   useEffect(() => {
     if (isUpdatedJobCardSuccess) onRefetchJobCards?.();
   }, [isUpdatedJobCardSuccess, onRefetchJobCards]);
+
+  useEffect(() => {
+    if (open) refetch();
+  }, [open, refetch]);
 
   return (
     <Modal

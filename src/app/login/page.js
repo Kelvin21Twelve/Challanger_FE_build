@@ -3,11 +3,13 @@
 import Swal from "sweetalert2";
 import Image from "next/image";
 import { redirect } from "next/navigation";
-import { useEffect, useContext } from "react";
 import { Input, Checkbox, Form, Button } from "antd";
+import { useEffect, useContext, useState } from "react";
 
 import { getBuildVersionText } from "@/utils";
 import { useGetLogo, useLoginMutation } from "@/queries";
+
+import { EyeShowIcon, EyeHideIcon } from "@/assets/icons/actions";
 
 import { UserContext } from "@/contexts/UserContext";
 
@@ -20,6 +22,8 @@ export default function Page() {
   const { data: logoUrl } = useGetLogo();
   const { mutate, data, isSuccess, isPending, isError } = useLoginMutation();
   const isLoading = isPending && !isSuccess && !isError;
+
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (values) => mutate(values);
 
@@ -74,10 +78,19 @@ export default function Page() {
               name="password"
             >
               <Input
-                placeholder="Password"
-                name="password"
-                type="password"
                 size="large"
+                name="password"
+                placeholder="Password"
+                type={!showPassword ? "password" : "text"}
+                suffix={
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    className="border-0 p-0 m-0 cursor-pointer text-gray-300"
+                  >
+                    {showPassword ? <EyeHideIcon /> : <EyeShowIcon />}
+                  </button>
+                }
               />
             </Item>
 

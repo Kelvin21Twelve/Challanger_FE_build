@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { Form, Select, Input, DatePicker } from "antd";
 
 import { useSyncDbQuery } from "@/queries";
@@ -61,9 +62,36 @@ export function EmployeeForm({
           <Item
             name="dob"
             label={t("DOB")}
-            rules={[{ required: true, message: t("This field is required") }]}
+            dependencies={["join_date"]}
+            rules={[
+              { required: true, message: t("This field is required") },
+              {
+                message: t("DOB cannot be greater or equal to join date"),
+                validator: (_, dob) => {
+                  let joinDate = form.getFieldValue("join_date");
+
+                  if (!!dob && !!joinDate) {
+                    dob = dayjs(dob).format("YYYY-MM-DD");
+                    const joinDate2 = dayjs(joinDate).format("YYYY-MM-DD");
+
+                    const isSame = dayjs(joinDate2).isSame(dob);
+                    const isAfter = dayjs(dob).isAfter(joinDate2);
+
+                    if (isAfter || isSame) return Promise.reject(new Error(""));
+                  }
+
+                  return Promise.resolve();
+                },
+              },
+            ]}
           >
-            <DatePicker className="w-full" placeholder={t("DOB")} />
+            <DatePicker
+              className="w-full"
+              placeholder={t("DOB")}
+              disabledDate={(current) =>
+                current && current.valueOf() > Date.now()
+              }
+            />
           </Item>
           <Item
             name="job_title"
@@ -80,7 +108,7 @@ export function EmployeeForm({
                   .includes(String(input).toLowerCase())
               }
               options={jobTitles?.data?.map((item) => ({
-                value: item.id,
+                value: String(item.id),
                 label: item.job_title,
               }))}
             />
@@ -88,7 +116,28 @@ export function EmployeeForm({
           <Item
             name="join_date"
             label={t("Join Date")}
-            rules={[{ required: true, message: t("This field is required") }]}
+            dependencies={["dob"]}
+            rules={[
+              { required: true, message: t("This field is required") },
+              {
+                message: t("DOB cannot be greater or equal to join date"),
+                validator: (_, joinDate) => {
+                  let dob = form.getFieldValue("dob");
+
+                  if (!!dob && !!joinDate) {
+                    const dob2 = dayjs(dob).format("YYYY-MM-DD");
+                    joinDate = dayjs(joinDate).format("YYYY-MM-DD");
+
+                    const isSame = dayjs(joinDate).isSame(dob2);
+                    const isAfter = dayjs(dob2).isAfter(joinDate);
+
+                    if (isAfter || isSame) return Promise.reject(new Error(""));
+                  }
+
+                  return Promise.resolve();
+                },
+              },
+            ]}
           >
             <DatePicker className="w-full" placeholder={t("Join Date")} />
           </Item>
@@ -109,7 +158,7 @@ export function EmployeeForm({
               options={
                 nationality?.data?.map((item) => ({
                   label: item.nationality,
-                  value: item.id,
+                  value: String(item.id),
                 })) || []
               }
             />
@@ -143,7 +192,11 @@ export function EmployeeForm({
               label={t("Password")}
               rules={[{ required: true, message: t("This field is required") }]}
             >
-              <Input placeholder={t("Password")} type="password" />
+              <Input
+                type="password"
+                autoComplete="off"
+                placeholder={t("Password")}
+              />
             </Item>
           )}
 
@@ -162,7 +215,7 @@ export function EmployeeForm({
               }
               options={visaTypes?.data?.map((item) => ({
                 label: item.visa_type,
-                value: item.id,
+                value: String(item.id),
               }))}
               loading={visaTypesLoading}
             />
@@ -171,14 +224,54 @@ export function EmployeeForm({
           <Item
             name="visa_start"
             label={t("Visa Start")}
-            rules={[{ required: true, message: t("This field is required") }]}
+            dependencies={["visa_end"]}
+            rules={[
+              { required: true, message: t("This field is required") },
+              {
+                message: t("Date cannot be greater or equal then end date"),
+                validator: (_, startDate) => {
+                  let endDate = form.getFieldValue("visa_end");
+
+                  if (!!startDate && !!endDate) {
+                    endDate = endDate.format("YYYY-MM-DD");
+                    const startDate2 = startDate.format("YYYY-MM-DD");
+                    const isAfter = dayjs(startDate2).isAfter(endDate);
+                    const isSame = dayjs(startDate2).isSame(endDate);
+
+                    if (isAfter || isSame) return Promise.reject(new Error(""));
+                  }
+
+                  return Promise.resolve();
+                },
+              },
+            ]}
           >
             <DatePicker className="w-full" placeholder={t("Visa Start")} />
           </Item>
           <Item
             name="visa_end"
             label={t("Visa End")}
-            rules={[{ required: true, message: t("This field is required") }]}
+            dependencies={["visa_start"]}
+            rules={[
+              { required: true, message: t("This field is required") },
+              {
+                message: t("Date can not be less or equal then start date"),
+                validator: (_, endDate) => {
+                  let startDate = form.getFieldValue("visa_start");
+
+                  if (!!startDate && !!endDate) {
+                    startDate = startDate.format("YYYY-MM-DD");
+                    const endDate2 = endDate.format("YYYY-MM-DD");
+                    const isAfter = dayjs(startDate).isAfter(endDate2);
+                    const isSame = dayjs(startDate).isSame(endDate2);
+
+                    if (isAfter || isSame) return Promise.reject(new Error(""));
+                  }
+
+                  return Promise.resolve();
+                },
+              },
+            ]}
           >
             <DatePicker className="w-full" placeholder={t("Visa End")} />
           </Item>
@@ -192,14 +285,54 @@ export function EmployeeForm({
           <Item
             name="pass_start"
             label={t("Pass Start")}
-            rules={[{ required: true, message: t("This field is required") }]}
+            dependencies={["pass_end"]}
+            rules={[
+              { required: true, message: t("This field is required") },
+              {
+                message: t("Date cannot be greater or equal then end date"),
+                validator: (_, startDate) => {
+                  let endDate = form.getFieldValue("pass_end");
+
+                  if (!!startDate && !!endDate) {
+                    endDate = endDate.format("YYYY-MM-DD");
+                    const startDate2 = startDate.format("YYYY-MM-DD");
+                    const isAfter = dayjs(startDate2).isAfter(endDate);
+                    const isSame = dayjs(startDate2).isSame(endDate);
+
+                    if (isAfter || isSame) return Promise.reject(new Error(""));
+                  }
+
+                  return Promise.resolve();
+                },
+              },
+            ]}
           >
             <DatePicker className="w-full" placeholder={t("Pass Start")} />
           </Item>
           <Item
             name="pass_end"
             label={t("Pass End")}
-            rules={[{ required: true, message: t("This field is required") }]}
+            dependencies={["pass_start"]}
+            rules={[
+              { required: true, message: t("This field is required") },
+              {
+                message: t("Date can not be less or equal then start date"),
+                validator: (_, endDate) => {
+                  let startDate = form.getFieldValue("pass_start");
+
+                  if (!!startDate && !!endDate) {
+                    startDate = startDate.format("YYYY-MM-DD");
+                    const endDate2 = endDate.format("YYYY-MM-DD");
+                    const isAfter = dayjs(startDate).isAfter(endDate2);
+                    const isSame = dayjs(startDate).isSame(endDate2);
+
+                    if (isAfter || isSame) return Promise.reject(new Error(""));
+                  }
+
+                  return Promise.resolve();
+                },
+              },
+            ]}
           >
             <DatePicker className="w-full" placeholder={t("Pass End")} />
           </Item>

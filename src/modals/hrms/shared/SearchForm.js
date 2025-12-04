@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { useTranslations } from "next-intl";
 import { Form, DatePicker, Button } from "antd";
 import { faX } from "@fortawesome/free-solid-svg-icons";
@@ -18,7 +19,28 @@ export function SearchForm({ onSubmit, onReset }) {
           <Item
             name="start_date"
             label={t("From Date")}
-            rules={[{ required: true, message: t("This field is required") }]}
+            dependencies={["end_date"]}
+            rules={[
+              { required: true, message: t("This field is required") },
+              {
+                message: t("Date range is invalid"),
+                validator: (_, startDate) => {
+                  let endDate = form.getFieldValue("end_date");
+
+                  if (!!startDate && !!endDate) {
+                    const startDate2 = startDate.format("YYYY-MM-DD");
+                    const endDate2 = endDate.format("YYYY-MM-DD");
+
+                    const isAfter = dayjs(startDate2).isAfter(endDate2);
+                    const isSame = dayjs(startDate2).isSame(endDate2);
+
+                    if (isAfter || isSame) return Promise.reject(new Error(""));
+                  }
+
+                  return Promise.resolve();
+                },
+              },
+            ]}
           >
             <DatePicker
               size="large"
@@ -32,7 +54,28 @@ export function SearchForm({ onSubmit, onReset }) {
           <Item
             name="end_date"
             label={t("To Date")}
-            rules={[{ required: true, message: t("This field is required") }]}
+            dependencies={["start_date"]}
+            rules={[
+              { required: true, message: t("This field is required") },
+              {
+                message: t("Date range is invalid"),
+                validator: (_, endDate) => {
+                  let startDate = form.getFieldValue("start_date");
+
+                  if (!!startDate && !!endDate) {
+                    const startDate2 = startDate.format("YYYY-MM-DD");
+                    const endDate2 = endDate.format("YYYY-MM-DD");
+
+                    const isAfter = dayjs(startDate2).isAfter(endDate2);
+                    const isSame = dayjs(startDate2).isSame(endDate2);
+
+                    if (isAfter || isSame) return Promise.reject(new Error(""));
+                  }
+
+                  return Promise.resolve();
+                },
+              },
+            ]}
           >
             <DatePicker
               size="large"

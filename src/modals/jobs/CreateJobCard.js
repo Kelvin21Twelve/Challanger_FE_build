@@ -118,7 +118,7 @@ function SearchForm({ searchCabMutate }) {
   );
 }
 
-function CreateForm({ form, handleFinish, data, onOpenVehicle }) {
+function CreateForm({ form, handleFinish, data, onOpenVehicle, open }) {
   const t = useTranslations("modals");
   const vehicleId = useWatch("vehicle", form);
   const { id: customerId } = data?.customer || {};
@@ -167,7 +167,11 @@ function CreateForm({ form, handleFinish, data, onOpenVehicle }) {
     [customerVehicleWithNames],
   );
 
-  const { data: availableCabList, isLoading: cabsLoading } = useGetCab("");
+  const {
+    refetch,
+    data: availableCabList,
+    isLoading: cabsLoading,
+  } = useGetCab("");
 
   useEffect(() => {
     if (data) {
@@ -223,6 +227,10 @@ function CreateForm({ form, handleFinish, data, onOpenVehicle }) {
       form.setFieldValue("cab_no", cab_no);
     }
   }, [availableCabList, form]);
+
+  useEffect(() => {
+    if (open) refetch();
+  }, [open, refetch]);
 
   return (
     <Form form={form} layout="vertical" onFinish={handleFinish}>
@@ -397,6 +405,7 @@ export default function CreateJobCard({ open, onClose, onRefetch }) {
       <hr />
 
       <CreateForm
+        open={open}
         form={form}
         data={customerData}
         handleFinish={handleFinish}

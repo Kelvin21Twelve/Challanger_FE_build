@@ -40,7 +40,23 @@ function ActionForm({ t, form, onSubmit, isFormLock }) {
       <Item
         label={t("Start Time")}
         name="excuses_start_time"
-        rules={[{ required: true, message: t("This field is required") }]}
+        dependencies={["excuses_end_time"]}
+        rules={[
+          { required: true, message: t("This field is required") },
+          {
+            message: t("Invalid Time Range"),
+            validator: (_, startTime) => {
+              const endTime = form.getFieldValue("excuses_end_time");
+
+              if (!!startTime && !!endTime) {
+                const diff = dayjs(endTime).diff(startTime);
+                if (diff <= 0) return Promise.reject(new Error(""));
+              }
+
+              return Promise.resolve();
+            },
+          },
+        ]}
       >
         <TimePicker
           placeholder={t("Start Time")}
@@ -52,7 +68,23 @@ function ActionForm({ t, form, onSubmit, isFormLock }) {
       <Item
         label={t("End Time")}
         name="excuses_end_time"
-        rules={[{ required: true, message: t("This field is required") }]}
+        dependencies={["excuses_start_time"]}
+        rules={[
+          { required: true, message: t("This field is required") },
+          {
+            message: t("Invalid Time Range"),
+            validator: (_, endTime) => {
+              const startTime = form.getFieldValue("excuses_start_time");
+
+              if (!!startTime && !!endTime) {
+                const diff = dayjs(endTime).diff(startTime);
+                if (diff <= 0) return Promise.reject(new Error(""));
+              }
+
+              return Promise.resolve();
+            },
+          },
+        ]}
       >
         <TimePicker
           placeholder={t("End Time")}

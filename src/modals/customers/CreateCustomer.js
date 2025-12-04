@@ -50,7 +50,7 @@ export default function CreateCustomer({
   };
 
   useEffect(() => {
-    if (dataId) {
+    if (dataId && open) {
       const array = data?.data || [];
       const item = array.find((item) => item.id == dataId);
       if (item) {
@@ -58,7 +58,7 @@ export default function CreateCustomer({
         form.setFieldValue("nationality", item.nationality);
       }
     }
-  }, [data?.data, dataId, form]);
+  }, [data?.data, dataId, form, open]);
 
   useEffect(() => {
     handle422Errors(form, response);
@@ -145,7 +145,6 @@ export default function CreateCustomer({
                         : Promise.resolve();
                     },
                   },
-
                   {
                     message: t("This field is required"),
                     validator: (_, value) => {
@@ -169,6 +168,18 @@ export default function CreateCustomer({
                 label={t("Civil ID")}
                 rules={[
                   { required: true, message: t("This field is required") },
+                  {
+                    message: t("This field is required"),
+                    validator: (_, value) => {
+                      if (String(value || "").length === 0)
+                        return Promise.resolve();
+
+                      const hasName = String(value || "").trim().length > 0;
+                      return !hasName
+                        ? Promise.reject(new Error())
+                        : Promise.resolve();
+                    },
+                  },
                 ]}
               >
                 <Input placeholder={t("Civil ID")} disabled={isReadOnly} />
@@ -205,6 +216,18 @@ export default function CreateCustomer({
                 label={t("Mobile 1")}
                 rules={[
                   { required: true, message: t("This field is required") },
+                  {
+                    message: t("This field is required"),
+                    validator: (_, value) => {
+                      if (String(value || "").length === 0)
+                        return Promise.resolve();
+
+                      const hasName = String(value || "").trim().length > 0;
+                      return !hasName
+                        ? Promise.reject(new Error())
+                        : Promise.resolve();
+                    },
+                  },
                 ]}
               >
                 <Input placeholder={t("Mobile 1")} disabled={isReadOnly} />

@@ -1,4 +1,6 @@
 import RoundTickIcon from "./round-tick";
+import EyeShowIcon from "./eye-show";
+import EyeHideIcon from "./eye-hide";
 import RefreshIcon from "./refresh";
 import PencilIcon from "./pencil";
 import PrintIcon from "./print";
@@ -10,6 +12,8 @@ import PlusIcon from "./plus";
 
 export {
   RoundTickIcon,
+  EyeHideIcon,
+  EyeShowIcon,
   RefreshIcon,
   PencilIcon,
   PrintIcon,

@@ -76,7 +76,28 @@ function ActionForm({ t, form, onSubmit, isFormLock }) {
       <Item
         label={t("Start Date")}
         name="vacations_start_date"
-        rules={[{ required: true, message: t("This field is required") }]}
+        dependencies={["vacations_end_date"]}
+        rules={[
+          { required: true, message: t("This field is required") },
+          {
+            message: t("Date range is invalid"),
+            validator: (_, startDate) => {
+              let endDate = form.getFieldValue("vacations_end_date");
+
+              if (!!startDate && !!endDate) {
+                const endDate2 = endDate.format("YYYY-MM-DD");
+                const startDate2 = startDate.format("YYYY-MM-DD");
+
+                const isSame = dayjs(startDate2).isSame(endDate2);
+                const isAfter = dayjs(startDate2).isAfter(endDate2);
+
+                if (isAfter || isSame) return Promise.reject(new Error(""));
+              }
+
+              return Promise.resolve();
+            },
+          },
+        ]}
       >
         <DatePicker placeholder={t("Start Date")} className="w-full" />
       </Item>
@@ -84,7 +105,46 @@ function ActionForm({ t, form, onSubmit, isFormLock }) {
       <Item
         label={t("To Date")}
         name="vacations_end_date"
-        rules={[{ required: true, message: t("This field is required") }]}
+        dependencies={["vacations_start_date", "vacations_resume_date"]}
+        rules={[
+          { required: true, message: t("This field is required") },
+          {
+            message: t("Date range is invalid"),
+            validator: (_, endDate) => {
+              let startDate = form.getFieldValue("vacations_start_date");
+
+              if (!!startDate && !!endDate) {
+                const endDate2 = endDate.format("YYYY-MM-DD");
+                const startDate2 = startDate.format("YYYY-MM-DD");
+
+                const isSame = dayjs(startDate2).isSame(endDate2);
+                const isAfter = dayjs(startDate2).isAfter(endDate2);
+
+                if (isAfter || isSame) return Promise.reject(new Error(""));
+              }
+
+              return Promise.resolve();
+            },
+          },
+          {
+            message: t("Date range is invalid"),
+            validator: (_, startDate) => {
+              let endDate = form.getFieldValue("vacations_resume_date");
+
+              if (!!startDate && !!endDate) {
+                const endDate2 = endDate.format("YYYY-MM-DD");
+                const startDate2 = startDate.format("YYYY-MM-DD");
+
+                const isSame = dayjs(startDate2).isSame(endDate2);
+                const isAfter = dayjs(startDate2).isAfter(endDate2);
+
+                if (isAfter || isSame) return Promise.reject(new Error(""));
+              }
+
+              return Promise.resolve();
+            },
+          },
+        ]}
       >
         <DatePicker placeholder={t("To Date")} className="w-full" />
       </Item>
@@ -92,7 +152,28 @@ function ActionForm({ t, form, onSubmit, isFormLock }) {
       <Item
         label={t("Resume Date")}
         name="vacations_resume_date"
-        rules={[{ required: true, message: t("This field is required") }]}
+        dependencies={["vacations_end_date"]}
+        rules={[
+          { required: true, message: t("This field is required") },
+          {
+            message: t("Date range is invalid"),
+            validator: (_, endDate) => {
+              let startDate = form.getFieldValue("vacations_end_date");
+
+              if (!!startDate && !!endDate) {
+                const endDate2 = endDate.format("YYYY-MM-DD");
+                const startDate2 = startDate.format("YYYY-MM-DD");
+
+                const isSame = dayjs(startDate2).isSame(endDate2);
+                const isAfter = dayjs(startDate2).isAfter(endDate2);
+
+                if (isAfter || isSame) return Promise.reject(new Error(""));
+              }
+
+              return Promise.resolve();
+            },
+          },
+        ]}
       >
         <DatePicker placeholder={t("Resume Date")} className="w-full" />
       </Item>

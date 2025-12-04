@@ -85,7 +85,28 @@ export default function CreateEditHolidays({ open, onClose, data }) {
         <Item
           name="start_date"
           label={t("Start Date")}
-          rules={[{ required: true, message: t("This field is required") }]}
+          dependencies={["end_date"]}
+          rules={[
+            { required: true, message: t("This field is required") },
+            {
+              message: t("Date range is invalid"),
+              validator: (_, startDate) => {
+                let endDate = form.getFieldValue("end_date");
+
+                if (!!startDate && !!endDate) {
+                  const endDate2 = endDate.format("YYYY-MM-DD");
+                  const startDate2 = startDate.format("YYYY-MM-DD");
+
+                  const isSame = dayjs(startDate2).isSame(endDate2);
+                  const isAfter = dayjs(startDate2).isAfter(endDate2);
+
+                  if (isAfter || isSame) return Promise.reject(new Error(""));
+                }
+
+                return Promise.resolve();
+              },
+            },
+          ]}
         >
           <DatePicker placeholder={t("Start Date")} className="w-full" />
         </Item>
@@ -93,7 +114,46 @@ export default function CreateEditHolidays({ open, onClose, data }) {
         <Item
           name="end_date"
           label={t("End Date")}
-          rules={[{ required: true, message: t("This field is required") }]}
+          dependencies={["start_date"]}
+          rules={[
+            { required: true, message: t("This field is required") },
+            {
+              message: t("Date range is invalid"),
+              validator: (_, endDate) => {
+                let startDate = form.getFieldValue("start_date");
+
+                if (!!startDate && !!endDate) {
+                  const endDate2 = endDate.format("YYYY-MM-DD");
+                  const startDate2 = startDate.format("YYYY-MM-DD");
+
+                  const isSame = dayjs(startDate2).isSame(endDate2);
+                  const isAfter = dayjs(startDate2).isAfter(endDate2);
+
+                  if (isAfter || isSame) return Promise.reject(new Error(""));
+                }
+
+                return Promise.resolve();
+              },
+            },
+            {
+              message: t("Date range is invalid"),
+              validator: (_, startDate) => {
+                let endDate = form.getFieldValue("resume_date");
+
+                if (!!startDate && !!endDate) {
+                  const endDate2 = endDate.format("YYYY-MM-DD");
+                  const startDate2 = startDate.format("YYYY-MM-DD");
+
+                  const isSame = dayjs(startDate2).isSame(endDate2);
+                  const isAfter = dayjs(startDate2).isAfter(endDate2);
+
+                  if (isAfter || isSame) return Promise.reject(new Error(""));
+                }
+
+                return Promise.resolve();
+              },
+            },
+          ]}
         >
           <DatePicker placeholder={t("End Date")} className="w-full" />
         </Item>
@@ -101,7 +161,28 @@ export default function CreateEditHolidays({ open, onClose, data }) {
         <Item
           name="resume_date"
           label={t("Resume Date")}
-          rules={[{ required: true, message: t("This field is required") }]}
+          dependencies={["end_date", "resume_date"]}
+          rules={[
+            { required: true, message: t("This field is required") },
+            {
+              message: t("Date range is invalid"),
+              validator: (_, endDate) => {
+                let startDate = form.getFieldValue("end_date");
+
+                if (!!startDate && !!endDate) {
+                  const endDate2 = endDate.format("YYYY-MM-DD");
+                  const startDate2 = startDate.format("YYYY-MM-DD");
+
+                  const isSame = dayjs(startDate2).isSame(endDate2);
+                  const isAfter = dayjs(startDate2).isAfter(endDate2);
+
+                  if (isAfter || isSame) return Promise.reject(new Error(""));
+                }
+
+                return Promise.resolve();
+              },
+            },
+          ]}
         >
           <DatePicker placeholder={t("Resume Date")} className="w-full" />
         </Item>

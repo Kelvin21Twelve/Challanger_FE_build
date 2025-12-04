@@ -325,6 +325,9 @@
     "View": "منظر"
   },
   "add-employee": {
+    "DOB cannot be greater or equal to join date": "لا يمكن أن يكون تاريخ الميلاد أكبر أو يساوي تاريخ الانضمام",
+    "Date can not be less or equal then start date": "لا يمكن أن يكون التاريخ أقل أو يساوي تاريخ البدء",
+    "Date cannot be greater or equal then end date": "لا يمكن أن يكون التاريخ أكبر أو يساوي تاريخ النهاية",
     "Print generation will take few minutes, Don't close the page!": "سيستغرق توليد الطباعة بضع دقائق ، لا تغلق الصفحة!",
     "Please select an employee first!": "الرجاء تحديد موظف أولا!",
     "Employee is deleted successfully!": "يتم حذف الموظف بنجاح!",
@@ -868,6 +871,10 @@
     "Add Note": "أضف ملاحظة",
     "Refund By": "استرداد المبلغ بواسطة",
     "Card": "بطاقة",
-    "Please upload a valid file": "الرجاء تحميل ملف صالح"
+    "Please upload a valid file": "الرجاء تحميل ملف صالح",
+    "Plate no is already exists": "رقم اللوحة موجود بالفعل",
+    "Chassis no is already exists": "رقم الهيكل موجود بالفعل",
+    "Date range is invalid": "نطاق التاريخ غير صالح",
+    "Invalid Time Range": "نطاق زمني غير صالح"
   }
 }

@@ -151,7 +151,7 @@ export default function Page() {
             className="!bg-[#6c757d] !rounded-none"
             onClick={() => setIsSparePartsSalesSearchFormOpen(true)}
           >
-            {t("Spare Parts Sales Search From")}
+            {t("Spare Parts Sales Search Form")}
           </Button>
 
           <Button
@@ -159,7 +159,7 @@ export default function Page() {
             className="!bg-[#6c757d] !rounded-none"
             onClick={() => setIsSparePartsReturnFormOpen(true)}
           >
-            {t("Spare Parts Return From")}
+            {t("Spare Parts Return Form")}
           </Button>
         </div>
       </div>

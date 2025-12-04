@@ -3,7 +3,7 @@
 import { Modal } from "antd";
 import { useTranslations } from "next-intl";
 
-import { useGetCompleteJobDetails } from "@/queries/useGetCompleteJobDetails";
+import { useGetJobCardPaymentList, useGetCompleteJobDetails } from "@/queries";
 
 import Labours from "./Labours";
 import ModalHeader from "./ModalHeader";
@@ -17,7 +17,6 @@ export default function JobCardDetails({ jobId, open, onClose, isAccounting }) {
   const { data, isLoading, error, isError } = useGetCompleteJobDetails(jobId);
 
   const {
-    overdue,
     job_card_details,
     customer_labours,
     job_card_calculation,
@@ -25,13 +24,23 @@ export default function JobCardDetails({ jobId, open, onClose, isAccounting }) {
     customer_used_spare_parts,
   } = data || {};
 
+  const { data: paymentListData } = useGetJobCardPaymentList(
+    job_card_details?.job_no,
+  );
+
+  const paidAmount =
+    paymentListData?.data?.reduce(
+      (acc, { amount }) => acc + Number(amount || 0),
+      0,
+    ) || 0;
+
   return (
     <Modal
       title={
         <ModalHeader
           jobId={jobId}
-          overdue={overdue}
-          calculation={job_card_calculation || {}}
+          paidAmount={paidAmount}
+          calculation={paymentListData || {}}
           onClickCar={() => setIsCreateCarModalOpen(true)}
           onClickCustomer={() => setIsCreateCustomerModalOpen(true)}
         />
